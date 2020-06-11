@@ -1,6 +1,7 @@
 name: TDLib CI
 
 on:
+
   push:
     branches: [ master ]
 
@@ -29,9 +30,14 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v1
         with:
           args: install gperf openssl
+      - uses: actions/cache@v1
+        with:
+          path: vcpkg
+          key: vcpkg
       - name: Setup vcpkg
         shell: bash
         run: |
+          [ ! -d "vspkg" ] || exit 0
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.bat
