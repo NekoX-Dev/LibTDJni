@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 apt-get update
+apt-get full-upgrade
 
 apt-get install -y git make zlib1g-dev libssl-dev gperf cmake default-jdk clang libc++-dev libc++abi-dev
 
