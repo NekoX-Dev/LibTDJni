@@ -1,22 +1,59 @@
 name: TDLib CI
 
 on:
-
   push:
-    branches: [ master ]
+    tags:
+      - 'td@*'
 
 jobs:
-  linux64:
+  x86_64:
+    if: "!contains(github.event.head_commit.message, 'test')"
+    name: x86_64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Build TDLib
-        run: docker run -v $PWD:/td debian:buster bash /td/build.sh
-      - uses: actions/upload-artifact@master
-        name: Upload TDJni Library
+        run: docker run -v $PWD:/td ubuntu:bionic bash /td/scripts/linux.sh
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
         with:
-          name: libtdjni.so
-          path: libtdjni.so
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: libtdjni.so
+          asset_name: libtdjni.x86_64.so
+          tag: ${{ github.ref }}
+          overwrite: true
+  x86:
+    if: "!contains(github.event.head_commit.message, 'test')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build TDLib
+        run: docker run -v $PWD:/td i386/ubuntu:bionic bash /td/scripts/linux.sh
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: libtdjni.so
+          asset_name: libtdjni.x86.so
+          tag: ${{ github.ref }}
+          overwrite: true
+  arm64v8:
+    if: "!contains(github.event.head_commit.message, 'test')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Init QEMU User Static
+        run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - name: Build TDLib
+        run: docker run -v $PWD:/td arm64v8/ubuntu:bionic bash /td/scripts/linux.sh
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: libtdjni.so
+          asset_name: libtdjni.arm64v8.so
+          tag: ${{ github.ref }}
+          overwrite: true
   win64:
     runs-on: windows-latest
     steps:
@@ -26,42 +63,68 @@ jobs:
           java-version: '11.0.6'
           architecture: x64
       - uses: ilammy/msvc-dev-cmd@v1
-      - name: Install gperf and openssl
+      - name: Install gperf
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: install gperf openssl
+          args: install gperf
       - uses: actions/cache@v1
         with:
           path: vcpkg
-          key: vcpkg
+          key: vcpkg-64
       - name: Setup vcpkg
         shell: bash
         run: |
-          [ ! -d "vspkg" ] || exit 0
+          [ -d "vcpkg" ] && exit 0
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.bat
-          ./vcpkg.exe install 'zlib:x64-windows'
+          ./vcpkg.exe install openssl:x64-windows zlib:x64-windows
       - name: Build TDLib
         shell: bash
         run: |
-          git submodule init
-          git submodule update
-          cd td
-          rm -rf build
-          mkdir build
-          cd build
-          cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=.. -DTD_ENABLE_JNI=ON -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../../vcpkg/scripts/buildsystems/vcpkg.cmake ..
-          cmake --build . --target install --config Release --verbose
-          cd ../..
-          rm -rf build
-          mkdir build
-          cd build
-          cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../td/tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake -DTd_DIR:PATH=$(readlink -e ../td/lib/cmake/Td) ..
-          cmake --build . --target install --config Release
-          mv Release/tdjni.dll ..
-      - uses: actions/upload-artifact@master
-        name: Upload TDJni Library
+          bash scripts/win64.sh
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
         with:
-          name: tdjni.dll
-          path: tdjni.dll
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: tdjni.dll
+          asset_name: tdjni.x86_64.dll
+          tag: ${{ github.ref }}
+          overwrite: true
+  win32:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11.0.6'
+          architecture: x64
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Install gperf
+        uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: install gperf
+      - uses: actions/cache@v1
+        with:
+          path: vcpkg
+          key: vcpkg-32
+      - name: Setup vcpkg
+        shell: bash
+        run: |
+          [ -d "vcpkg" ] && exit 0
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.bat
+          ./vcpkg.exe install openssl:x86-windows zlib:x86-windows
+      - name: Build TDLib
+        shell: bash
+        run: |
+          bash scripts/win32.sh
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: tdjni.dll
+          asset_name: tdjni.x86.dll
+          tag: ${{ github.ref }}
+          overwrite: true

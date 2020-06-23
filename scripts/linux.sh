@@ -1,19 +1,13 @@
 #!/usr/bin/env bash
 
 apt-get update
-apt-get full-upgrade
-
 apt-get install -y git make zlib1g-dev libssl-dev gperf cmake default-jdk clang libc++-dev libc++abi-dev
 
 cd /td
 
-git submodule init && git submodule update
+git submodule update --init --recursive
 
 cd td
-
-git fetch origin master
-git checkout origin/master
-git clean -fdx
 
 mkdir build && cd build
 
