@@ -1,5 +1,7 @@
 git submodule update --init --recursive
 
+bash patches.sh || exit 1
+
 cd td
 rm -rf build
 mkdir build

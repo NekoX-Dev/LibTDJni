@@ -7,6 +7,8 @@ cd /td
 
 git submodule update --init --recursive
 
+bash patches.sh || exit 1
+
 cd td
 
 mkdir build && cd build

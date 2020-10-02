@@ -1,0 +1,16 @@
+Index: td/telegram/ContactsManager.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- td/telegram/ContactsManager.cpp	(revision e0b335bc3ec4026c84ecffc54fca45ea2c29b8d8)
++++ td/telegram/ContactsManager.cpp	(date 1601646052920)
+@@ -3931,7 +3931,7 @@
+
+   const User *u = get_user(user_id);
+   if (u == nullptr || u->access_hash == -1 || u->is_min_access_hash) {
+-    if (td_->auth_manager_->is_bot() && user_id.is_valid()) {
++    if (user_id.is_valid()) {
+       return make_tl_object<telegram_api::inputUser>(user_id.get(), 0);
+     }
+     return nullptr;
