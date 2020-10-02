@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-apt-get update
-apt-get install -y git make zlib1g-dev libssl-dev gperf cmake default-jdk clang libc++-dev libc++abi-dev
+apt update && apt install -y git make zlib1g-dev libssl-dev gperf cmake default-jdk clang libc++-dev libc++abi-dev
 
-cd /td
+cd $1
 
 git submodule update --init --recursive
 

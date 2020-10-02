@@ -23,9 +23,10 @@ git add .
 
 git commit -m "Update TDLib"
 
-git push
+git push -f
 
 tag="td@$(cd td && git log --pretty=format:'%h' -n 1)"
+tag=${tag:0:-1}
 
 git tag "$tag" -f
 git push origin "$tag" -f
