@@ -1,5 +1,11 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-project(ktd VERSION 1.0.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+
+project(libtdjni VERSION 1.0 LANGUAGES CXX)
+
+if (POLICY CMP0054)
+  # do not expand quoted arguments
+  cmake_policy(SET CMP0054 NEW)
+endif()
 
 find_package(Td REQUIRED)
 
@@ -9,7 +15,7 @@ endif()
 message(STATUS "Found JNI: ${JNI_INCLUDE_DIRS} ${JNI_LIBRARIES}")
 
 if (NOT Java_FOUND)
-  find_package(Java 1.6 REQUIRED)
+  find_package(Java REQUIRED)
 endif()
 message(STATUS "Found Java: ${Java_JAVAC_EXECUTABLE} ${Java_JAVADOC_EXECUTABLE}")
 

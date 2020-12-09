@@ -22,6 +22,10 @@ jobs:
           asset_name: libtdjni.x86_64.so
           tag: ${{ github.ref }}
           overwrite: true
+  #      - name: Publish docker container
+  #        run: |
+  #          docker login docker.pkg.github.com -u $GITHUB_ACTOR -p "${{ secrets.GITHUB_TOKEN }}"
+  #          docker build -t td-base .
   x86:
     if: "!contains(github.event.head_commit.message, 'test')"
     runs-on: ubuntu-latest
