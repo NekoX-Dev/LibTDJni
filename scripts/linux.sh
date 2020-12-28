@@ -33,5 +33,6 @@ cmake --build . --target install || exit
 cd ..
 
 mv build/libtdjni.so .
+strip libtdjni.so
 
 rm -rf build
