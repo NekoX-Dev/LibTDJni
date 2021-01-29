@@ -22,25 +22,6 @@ jobs:
           asset_name: libtdjni.x86_64.so
           tag: ${{ github.ref }}
           overwrite: true
-  #      - name: Publish docker container
-  #        run: |
-  #          docker login docker.pkg.github.com -u $GITHUB_ACTOR -p "${{ secrets.GITHUB_TOKEN }}"
-  #          docker build -t td-base .
-  x86:
-    if: "!contains(github.event.head_commit.message, 'test')"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build TDLib
-        run: sudo bash scripts/linux.sh $PWD
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: libtdjni.so
-          asset_name: libtdjni.x86.so
-          tag: ${{ github.ref }}
-          overwrite: true
   arm64v8:
     if: "!contains(github.event.head_commit.message, 'test')"
     runs-on: ubuntu-latest
@@ -93,42 +74,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: tdjni.dll
           asset_name: tdjni.x86_64.dll
-          tag: ${{ github.ref }}
-          overwrite: true
-  win32:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '11.0.6'
-          architecture: x64
-      - uses: ilammy/msvc-dev-cmd@v1
-      - name: Install gperf
-        uses: crazy-max/ghaction-chocolatey@v1
-        with:
-          args: install gperf
-      - uses: actions/cache@v1
-        with:
-          path: vcpkg
-          key: vcpkg-32
-      - name: Setup vcpkg
-        shell: bash
-        run: |
-          [ -d "vcpkg" ] && exit 0
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.bat
-          ./vcpkg.exe install openssl:x86-windows zlib:x86-windows
-      - name: Build TDLib
-        shell: bash
-        run: |
-          bash scripts/win32.sh
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: tdjni.dll
-          asset_name: tdjni.x86.dll
           tag: ${{ github.ref }}
           overwrite: true
