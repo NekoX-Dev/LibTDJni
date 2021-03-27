@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build TDLib
-        run: sudo bash scripts/linux.sh $PWD
+        run: docker run -v $PWD:/td debian:stable bash /td/scripts/linux.sh /td
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
