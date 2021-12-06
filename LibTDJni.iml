@@ -4,6 +4,13 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/td/example/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/td/td/generate/auto" />
+      <excludeFolder url="file://$MODULE_DIR$/td/td/build" />
+      <excludeFolder url="file://$MODULE_DIR$/td/tdutils/generate/auto" />
+      <excludeFolder url="file://$MODULE_DIR$/td/auto" />
+      <excludeFolder url="file://$MODULE_DIR$/td/build" />
+      <excludeFolder url="file://$MODULE_DIR$/build/CMakeFiles/3.22.0/CompilerIdCXX/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/build/CMakeFiles/CMakeTmp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
